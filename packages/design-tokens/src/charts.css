@@ -1,0 +1,12 @@
+:root {
+  --vega-background: var(--background);
+  --vega-axis: var(--muted-foreground);
+  --vega-grid: color-mix(in oklab, var(--border) 85%, transparent);
+  --vega-label: var(--foreground);
+
+  --vega-series-1: var(--chart-1);
+  --vega-series-2: var(--chart-2);
+  --vega-series-3: var(--chart-3);
+  --vega-series-4: var(--chart-4);
+  --vega-series-5: var(--chart-5);
+}

@@ -1,0 +1,11 @@
+@import "@acme/design-tokens";
+@import "@acme/design-tokens/themes/gray";
+@import "@acme/design-tokens/themes/gray-vega";
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}

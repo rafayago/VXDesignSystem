@@ -1,0 +1,15 @@
+:root {
+  --chart-1: oklch(0.62 0.16 260);
+  --chart-2: oklch(0.7 0.14 200);
+  --chart-3: oklch(0.68 0.15 140);
+  --chart-4: oklch(0.74 0.17 85);
+  --chart-5: oklch(0.63 0.19 20);
+}
+
+.dark {
+  --chart-1: oklch(0.72 0.15 260);
+  --chart-2: oklch(0.78 0.12 200);
+  --chart-3: oklch(0.76 0.12 140);
+  --chart-4: oklch(0.82 0.14 85);
+  --chart-5: oklch(0.74 0.16 20);
+}

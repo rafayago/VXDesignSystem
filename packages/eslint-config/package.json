@@ -1,0 +1,11 @@
+{
+  "name": "@acme/eslint-config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./base.js",
+  "exports": {
+    "./base": "./base.js",
+    "./next": "./next.js"
+  }
+}

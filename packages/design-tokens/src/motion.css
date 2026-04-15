@@ -1,0 +1,15 @@
+:root {
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-energetic: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 120ms;
+  --dur-normal: 220ms;
+  --dur-slow: 380ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-normal: 1ms;
+    --dur-slow: 1ms;
+  }
+}
