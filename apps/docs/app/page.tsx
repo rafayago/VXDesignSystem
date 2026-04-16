@@ -11,7 +11,7 @@ import {
   Select,
   Tabs,
   Tooltip,
-} from "@acme/ui";
+} from "@vortx/ui";
 
 export default function DocsHomePage() {
   const [isDark, setIsDark] = useState(false);
@@ -33,13 +33,13 @@ export default function DocsHomePage() {
             Framework-agnostic tokens + headless primitives
           </h1>
           <p className="max-w-3xl text-muted-foreground">
-            This docs app validates shared tokens from @acme/design-tokens and
-            component wrappers from @acme/ui.
+            This docs app validates shared tokens from @vortx/design-tokens and
+            component wrappers from @vortx/ui.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button withIcon>Primary Action</Button>
+          <Button>Primary Action</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="ghost" onClick={() => setIsDark((value) => !value)}>
             Toggle {isDark ? "Light" : "Dark"}

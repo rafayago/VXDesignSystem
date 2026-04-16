@@ -1,4 +1,4 @@
-import { Card, CardDescription, CardTitle } from "@acme/ui";
+import { Card, CardDescription, CardTitle } from "@vortx/ui";
 
 export default function AdminHomePage() {
   return (
@@ -6,7 +6,8 @@ export default function AdminHomePage() {
       <Card>
         <CardTitle>Admin App Consumer</CardTitle>
         <CardDescription>
-          This app reuses the same semantic token layer while keeping deployment boundaries separate.
+          This app reuses the same semantic token layer while keeping deployment
+          boundaries separate.
         </CardDescription>
       </Card>
     </main>

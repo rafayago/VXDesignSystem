@@ -14,6 +14,9 @@
     "sourceMap": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./*"]
+    }
   }
 }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "@acme/ui";
+import { Button } from "@vortx/ui";
 
 const meta: Meta<typeof Button> = {
   title: "Components/Button",
@@ -7,8 +7,7 @@ const meta: Meta<typeof Button> = {
   tags: ["autodocs"],
   args: {
     children: "Launch",
-    variant: "primary",
-    withIcon: false,
+    variant: "default",
   },
 };
 
@@ -20,11 +19,5 @@ export const Primary: Story = {};
 export const Secondary: Story = {
   args: {
     variant: "secondary",
-  },
-};
-
-export const WithIcon: Story = {
-  args: {
-    withIcon: true,
   },
 };

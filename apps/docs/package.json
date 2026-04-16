@@ -1,5 +1,5 @@
 {
-  "name": "@acme/docs",
+  "name": "@vortx/docs",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,8 +13,8 @@
     "clean": "rm -rf .next"
   },
   "dependencies": {
-    "@acme/design-tokens": "*",
-    "@acme/ui": "*",
+    "@vortx/design-tokens": "*",
+    "@vortx/ui": "*",
     "next": "16.2.3",
     "react": "19.2.0",
     "react-dom": "19.2.0"

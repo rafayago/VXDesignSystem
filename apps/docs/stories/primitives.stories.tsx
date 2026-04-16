@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Menu, Popover, Select, Tabs, Tooltip, Button } from "@acme/ui";
+import { Menu, Popover, Select, Tabs, Tooltip, Button } from "@vortx/ui";
 
 const meta: Meta = {
   title: "Primitives/Overview",

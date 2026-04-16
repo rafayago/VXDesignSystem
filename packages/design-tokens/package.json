@@ -1,5 +1,5 @@
 {
-  "name": "@acme/design-tokens",
+  "name": "@vortx/design-tokens",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -8,6 +8,7 @@
   ],
   "exports": {
     ".": "./src/index.css",
+    "./styles.css": "./src/index.css",
     "./themes/gray": "./src/themes/gray.css",
     "./themes/gray-vega": "./src/themes/gray-vega.css",
     "./typography": "./src/typography.css",

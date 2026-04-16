@@ -4,8 +4,8 @@ Framework-agnostic design system starter for multiple Next.js 16 applications.
 
 This repository is organized so the source of truth is shared packages, not an app:
 
-- `@acme/design-tokens`: CSS-first tokens, semantic theme mapping, Tailwind v4 `@theme` exports.
-- `@acme/ui`: reusable React primitives and wrappers that consume semantic tokens.
+- `@vortx/design-tokens`: CSS-first tokens, semantic theme mapping, Tailwind v4 `@theme` exports.
+- `@vortx/ui`: reusable React primitives and wrappers that consume semantic tokens.
 - `apps/docs`: documentation and visual QA playground.
 - `apps/web` and `apps/admin`: example consuming applications.
 
@@ -23,7 +23,6 @@ This repository is organized so the source of truth is shared packages, not an a
 │  ├─ eslint-config/
 │  └─ typescript-config/
 ├─ package.json
-├─ pnpm-workspace.yaml
 └─ turbo.json
 ```
 
@@ -63,31 +62,25 @@ This keeps behavior and visual semantics reusable across app boundaries.
 1. Install dependencies:
 
 ```bash
-pnpm install
-```
-
-Alternative with npm workspaces:
-
-```bash
 npm install
 ```
 
 2. Run all dev servers (Turbo parallel):
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 3. Run only docs app:
 
 ```bash
-pnpm --filter @acme/docs dev
+npm run dev --workspace=@vortx/docs
 ```
 
 4. Run Storybook visual QA for docs:
 
 ```bash
-pnpm --filter @acme/docs storybook
+npm run storybook --workspace=@vortx/docs
 ```
 
 ## How Apps Consume Tokens
@@ -95,9 +88,9 @@ pnpm --filter @acme/docs storybook
 Each app imports shared CSS in `app/globals.css`:
 
 ```css
-@import "@acme/design-tokens";
-@import "@acme/design-tokens/themes/gray";
-@import "@acme/design-tokens/themes/gray-vega";
+@import "@vortx/design-tokens/styles.css";
+@import "@vortx/design-tokens/themes/gray";
+@import "@vortx/design-tokens/themes/gray-vega";
 ```
 
 Apps can then use semantic utilities such as:

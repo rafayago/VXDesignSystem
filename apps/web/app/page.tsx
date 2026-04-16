@@ -1,4 +1,4 @@
-import { Button, Card, CardDescription, CardTitle } from "@acme/ui";
+import { Button, Card, CardDescription, CardTitle } from "@vortx/ui";
 
 export default function WebHomePage() {
   return (
@@ -6,10 +6,11 @@ export default function WebHomePage() {
       <Card>
         <CardTitle>Web App Consumer</CardTitle>
         <CardDescription>
-          Shared semantic tokens and UI wrappers are consumed from workspace packages.
+          Shared semantic tokens and UI wrappers are consumed from workspace
+          packages.
         </CardDescription>
         <div className="mt-4">
-          <Button withIcon>Continue</Button>
+          <Button>Continue</Button>
         </div>
       </Card>
     </main>

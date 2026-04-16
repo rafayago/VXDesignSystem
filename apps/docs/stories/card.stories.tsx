@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Card, CardDescription, CardTitle } from "@acme/ui";
+import { Card, CardDescription, CardTitle } from "@vortx/ui";
 
 const meta: Meta = {
   title: "Components/Card",
