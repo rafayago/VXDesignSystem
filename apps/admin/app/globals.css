@@ -1,2 +1,2 @@
-@import "@vortx/design-tokens/styles.css";
-@import "@vortx/design-tokens/themes/gray";
+@import "../../../packages/design-tokens/styles.css";
+@import "../../../packages/design-tokens/themes/gray.css";

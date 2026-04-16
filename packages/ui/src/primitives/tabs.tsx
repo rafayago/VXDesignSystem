@@ -1,8 +1,72 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
+import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../lib/utils";
 
+// Low-level composable exports
+export function TabsRoot({
+  className,
+  ...props
+}: ComponentProps<typeof TabsPrimitive.Root>) {
+  return (
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      className={cn("flex flex-col gap-3", className)}
+      {...props}
+    />
+  );
+}
+
+export function TabsList({
+  className,
+  ...props
+}: ComponentProps<typeof TabsPrimitive.List>) {
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      className={cn(
+        "inline-flex items-center gap-1 rounded-lg bg-muted p-1 text-muted-foreground",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function TabsTrigger({
+  className,
+  ...props
+}: ComponentProps<typeof TabsPrimitive.Tab>) {
+  return (
+    <TabsPrimitive.Tab
+      data-slot="tabs-trigger"
+      className={cn(
+        "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow-sm",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function TabsPanel({
+  className,
+  ...props
+}: ComponentProps<typeof TabsPrimitive.Panel>) {
+  return (
+    <TabsPrimitive.Panel
+      data-slot="tabs-panel"
+      className={cn(
+        "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+// Legacy high-level Tabs component for backward compatibility
 export interface TabItem {
   id: string;
   label: string;
@@ -11,45 +75,32 @@ export interface TabItem {
 
 export interface TabsProps {
   tabs: TabItem[];
-  initialTabId?: string;
+  defaultValue?: string;
   className?: string;
 }
 
-export function Tabs({ tabs, initialTabId, className }: TabsProps) {
-  const fallbackTabId = tabs[0]?.id;
-  const [activeId, setActiveId] = useState(initialTabId ?? fallbackTabId);
+export function Tabs({ tabs, defaultValue, className }: TabsProps) {
+  const fallbackValue = tabs[0]?.id;
 
-  if (!tabs.length || !activeId) {
-    return null;
-  }
+  if (!tabs.length) return null;
 
   return (
-    <div className={cn("space-y-3", className)}>
-      <div role="tablist" className="inline-flex gap-2 rounded-lg bg-muted p-1">
-        {tabs.map((tab) => {
-          const isActive = tab.id === activeId;
-
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              className={cn(
-                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-              onClick={() => setActiveId(tab.id)}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-      <div className="rounded-lg border border-border bg-card p-4 text-card-foreground">
-        {tabs.find((tab) => tab.id === activeId)?.content}
-      </div>
-    </div>
+    <TabsRoot
+      defaultValue={defaultValue ?? fallbackValue}
+      className={className}
+    >
+      <TabsList>
+        {tabs.map((tab) => (
+          <TabsTrigger key={tab.id} value={tab.id}>
+            {tab.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {tabs.map((tab) => (
+        <TabsPanel key={tab.id} value={tab.id}>
+          {tab.content}
+        </TabsPanel>
+      ))}
+    </TabsRoot>
   );
 }

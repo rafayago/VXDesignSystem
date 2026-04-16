@@ -1,3 +1,3 @@
-@import "@vortx/design-tokens/styles.css";
-@import "@vortx/design-tokens/themes/gray";
-@import "@vortx/design-tokens/themes/gray-vega";
+@import "../../../packages/design-tokens/styles.css";
+@import "../../../packages/design-tokens/themes/gray.css";
+@import "../../../packages/design-tokens/themes/gray-vega.css";

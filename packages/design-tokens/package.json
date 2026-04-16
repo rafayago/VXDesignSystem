@@ -7,16 +7,21 @@
     "**/*.css"
   ],
   "exports": {
-    ".": "./src/index.css",
-    "./styles.css": "./src/index.css",
-    "./themes/gray": "./src/themes/gray.css",
-    "./themes/gray-vega": "./src/themes/gray-vega.css",
-    "./typography": "./src/typography.css",
-    "./motion": "./src/motion.css",
-    "./charts": "./src/charts.css"
+    ".": "./styles.css",
+    "./styles.css": "./styles.css",
+    "./themes/gray": "./themes/gray.css",
+    "./themes/gray-vega": "./themes/gray-vega.css",
+    "./typography": "./typography.css",
+    "./motion": "./motion.css",
+    "./charts": "./charts.css"
   },
   "files": [
-    "src"
+    "src",
+    "styles.css",
+    "typography.css",
+    "motion.css",
+    "charts.css",
+    "themes"
   ],
   "scripts": {
     "build": "echo 'No build step required for CSS token package'",
