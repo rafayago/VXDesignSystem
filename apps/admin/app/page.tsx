@@ -1,15 +1,29 @@
-import { Card, CardDescription, CardTitle } from "@vortx/ui";
+import {
+  SidebarInset,
+  SidebarProvider
+} from "@/components/ui/sidebar"
+import { AppSidebar } from "./components/app-sidebar"
 
-export default function AdminHomePage() {
+export default function Page() {
   return (
-    <main className="mx-auto grid min-h-screen w-full max-w-4xl content-center gap-5 px-6 py-16">
-      <Card>
-        <CardTitle>Admin App Consumer</CardTitle>
-        <CardDescription>
-          This app reuses the same semantic token layer while keeping deployment
-          boundaries separate.
-        </CardDescription>
-      </Card>
-    </main>
-  );
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "350px",
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar />
+      <SidebarInset>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          {Array.from({ length: 24 }).map((_, index) => (
+            <div
+              key={index}
+              className="aspect-video h-12 w-full rounded-lg bg-muted/50"
+            />
+          ))}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
 }

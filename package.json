@@ -15,6 +15,7 @@
     "clean": "turbo run clean"
   },
   "devDependencies": {
+    "shadcn": "^4.3.0",
     "turbo": "^2.5.0",
     "typescript": "^5.8.3"
   }

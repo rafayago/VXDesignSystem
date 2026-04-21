@@ -9,11 +9,11 @@
   "exports": {
     ".": "./src/index.css",
     "./styles.css": "./src/index.css",
+    "./tokens": "./src/tokens/index.css",
+    "./themes/light": "./src/themes/light.css",
+    "./themes/dark": "./src/themes/dark.css",
     "./themes/gray": "./src/themes/gray.css",
-    "./themes/gray-vega": "./src/themes/gray-vega.css",
-    "./typography": "./src/typography.css",
-    "./motion": "./src/motion.css",
-    "./charts": "./src/charts.css"
+    "./themes/gray-vega": "./src/themes/gray-vega.css"
   },
   "files": [
     "src"
@@ -23,6 +23,7 @@
     "dev": "echo 'Design tokens are consumed directly as CSS'",
     "lint": "echo 'No lint configured yet'",
     "typecheck": "echo 'No typecheck step for CSS package'",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "export:figma": "node scripts/export-tokens.mjs"
   }
 }

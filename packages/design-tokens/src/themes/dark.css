@@ -1,0 +1,44 @@
+.dark {
+  --background: var(--gray-950);
+  --foreground: var(--gray-50);
+
+  --card: var(--gray-800);
+  --card-foreground: var(--gray-50);
+
+  --popover: var(--gray-800);
+  --popover-foreground: var(--gray-50);
+
+  --primary: var(--gray-200);
+  --primary-foreground: var(--gray-800);
+
+  --secondary: var(--gray-700);
+  --secondary-foreground: var(--gray-50);
+
+  --muted: var(--gray-700);
+  --muted-foreground: var(--gray-400);
+
+  --accent: var(--gray-700);
+  --accent-foreground: var(--gray-50);
+
+  --destructive: var(--red-400);
+
+  /* Alpha-based borders can't reference a primitive — kept as raw values */
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: var(--gray-500);
+
+  --chart-1: var(--chart-blue);
+  --chart-2: var(--chart-green);
+  --chart-3: var(--chart-yellow);
+  --chart-4: var(--chart-purple);
+  --chart-5: var(--chart-coral);
+
+  --sidebar: var(--gray-800);
+  --sidebar-foreground: var(--gray-50);
+  --sidebar-primary: var(--chart-blue);
+  --sidebar-primary-foreground: var(--gray-50);
+  --sidebar-accent: var(--gray-700);
+  --sidebar-accent-foreground: var(--gray-50);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: var(--gray-500);
+}

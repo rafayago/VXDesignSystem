@@ -1,0 +1,11 @@
+node_modules
+dist
+build
+*.log
+*.md
+*.txt
+*.scss
+*.html
+*.png
+*.jpg
+*.gif

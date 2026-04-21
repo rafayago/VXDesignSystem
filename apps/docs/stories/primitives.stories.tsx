@@ -1,69 +1,79 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Menu, Popover, Select, Tabs, Tooltip, Button } from "@vortx/ui";
+import { Box, Stack, Inline, Text, Heading, Surface } from "@vortx/ui";
 
 const meta: Meta = {
-  title: "Primitives/Overview",
+  title: "Primitives/Layout",
   tags: ["autodocs"],
 };
 
 export default meta;
-
 type Story = StoryObj;
 
-export const Playground: Story = {
+export const BoxPrimitive: Story = {
+  name: "Box",
   render: () => (
-    <div className="grid max-w-2xl gap-6 p-2">
-      <div className="flex flex-wrap items-center gap-3">
-        <Popover triggerLabel="Open Popover">
-          <p className="text-sm">
-            Popover content uses popover semantic tokens.
-          </p>
-        </Popover>
-        <Menu
-          label="Menu"
-          items={[
-            { id: "edit", label: "Edit" },
-            { id: "archive", label: "Archive" },
-            { id: "delete", label: "Delete" },
-          ]}
-        />
-        <Tooltip content="Tooltip uses foreground/background contrast tokens.">
-          <Button variant="secondary">Hover Me</Button>
-        </Tooltip>
-      </div>
+    <Box className="rounded-lg border border-border p-4">
+      Box — a plain div wrapper that accepts className.
+    </Box>
+  ),
+};
 
-      <Select
-        aria-label="Demo select"
-        options={[
-          { value: "gray", label: "Gray Primary" },
-          { value: "vega", label: "Gray + Vega Charts" },
-        ]}
-        defaultValue="gray"
-      />
+export const StackPrimitive: Story = {
+  name: "Stack",
+  render: () => (
+    <Stack gap={3}>
+      <div className="rounded-md bg-muted px-3 py-2 text-sm">Item 1</div>
+      <div className="rounded-md bg-muted px-3 py-2 text-sm">Item 2</div>
+      <div className="rounded-md bg-muted px-3 py-2 text-sm">Item 3</div>
+    </Stack>
+  ),
+};
 
-      <Tabs
-        tabs={[
-          {
-            id: "tokens",
-            label: "Tokens",
-            content: (
-              <p className="text-sm">
-                Semantic CSS variables map to utility APIs via @theme inline.
-              </p>
-            ),
-          },
-          {
-            id: "primitives",
-            label: "Primitives",
-            content: (
-              <p className="text-sm">
-                Behavior primitives keep style control in your design system
-                layer.
-              </p>
-            ),
-          },
-        ]}
-      />
-    </div>
+export const InlinePrimitive: Story = {
+  name: "Inline",
+  render: () => (
+    <Inline gap={2}>
+      <div className="rounded-md bg-muted px-3 py-2 text-sm">Alpha</div>
+      <div className="rounded-md bg-muted px-3 py-2 text-sm">Beta</div>
+      <div className="rounded-md bg-muted px-3 py-2 text-sm">Gamma</div>
+    </Inline>
+  ),
+};
+
+export const TextPrimitive: Story = {
+  name: "Text",
+  render: () => (
+    <Stack gap={2}>
+      <Text size="lg">Large text</Text>
+      <Text>Base text</Text>
+      <Text size="sm">Small text</Text>
+      <Text size="xs" muted>Extra small muted</Text>
+    </Stack>
+  ),
+};
+
+export const HeadingPrimitive: Story = {
+  name: "Heading",
+  render: () => (
+    <Stack gap={2}>
+      <Heading level={1}>Heading 1</Heading>
+      <Heading level={2}>Heading 2</Heading>
+      <Heading level={3}>Heading 3</Heading>
+      <Heading level={4}>Heading 4</Heading>
+    </Stack>
+  ),
+};
+
+export const SurfacePrimitive: Story = {
+  name: "Surface",
+  render: () => (
+    <Stack gap={3}>
+      <Surface>
+        <Text size="sm">Default surface</Text>
+      </Surface>
+      <Surface elevated>
+        <Text size="sm">Elevated surface with shadow</Text>
+      </Surface>
+    </Stack>
   ),
 };

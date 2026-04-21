@@ -1,0 +1,45 @@
+:root {
+  --background: var(--white);
+  --foreground: var(--gray-900);
+
+  --card: var(--white);
+  --card-foreground: var(--gray-900);
+
+  --popover: var(--white);
+  --popover-foreground: var(--gray-900);
+
+  --primary: var(--gray-900);
+  --primary-foreground: var(--gray-50);
+
+  --secondary: var(--gray-100);
+  --secondary-foreground: var(--gray-900);
+
+  --muted: var(--gray-100);
+  --muted-foreground: var(--gray-500);
+
+  --accent: var(--gray-100);
+  --accent-foreground: var(--gray-900);
+
+  --destructive: var(--red-500);
+
+  --border: var(--gray-200);
+  --input: var(--gray-200);
+  --ring: var(--gray-400);
+
+  --radius: 0.625rem;
+
+  --chart-1: var(--chart-orange);
+  --chart-2: var(--chart-teal);
+  --chart-3: var(--chart-slate);
+  --chart-4: var(--chart-lime);
+  --chart-5: var(--chart-yellow);
+
+  --sidebar: var(--gray-50);
+  --sidebar-foreground: var(--gray-900);
+  --sidebar-primary: var(--gray-900);
+  --sidebar-primary-foreground: var(--gray-50);
+  --sidebar-accent: var(--gray-100);
+  --sidebar-accent-foreground: var(--gray-900);
+  --sidebar-border: var(--gray-200);
+  --sidebar-ring: var(--gray-400);
+}

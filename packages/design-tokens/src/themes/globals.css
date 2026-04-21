@@ -1,0 +1,82 @@
+@theme {
+  --color-transparent: transparent;
+  --color-current: currentcolor;
+  --color-black: var(--black);
+  --color-white: var(--white);
+
+  /* Remove unused Tailwind default palettes */
+  --color-amber-*:   initial;
+  --color-emerald-*: initial;
+  --color-sky-*:     initial;
+  --color-violet-*:  initial;
+  --color-rose-*:    initial;
+  --color-slate-*:   initial;
+  --color-stone-*:   initial;
+  --color-fuchsia-*: initial;
+
+  /* ── Gray scale — references primitive.css (single source of truth) ─────── */
+  --color-gray-50:  var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
+  --color-gray-950: var(--gray-950);
+
+  /* ── Neutral → gray alias (bg-neutral-* = bg-gray-*) ───────────────────── */
+  --color-neutral-50: var(--color-gray-50);
+  --color-neutral-100: var(--color-gray-100);
+  --color-neutral-200: var(--color-gray-200);
+  --color-neutral-300: var(--color-gray-300);
+  --color-neutral-400: var(--color-gray-400);
+  --color-neutral-500: var(--color-gray-500);
+  --color-neutral-600: var(--color-gray-600);
+  --color-neutral-700: var(--color-gray-700);
+  --color-neutral-800: var(--color-gray-800);
+  --color-neutral-900: var(--color-gray-900);
+  --color-neutral-950: var(--color-gray-950);
+
+  /* ── Brand palettes ─────────────────────────────────────────────────────── */
+  --color-vtxnavy-50:  oklch(0.9598 0.0161 262.75);
+  --color-vtxnavy-100: oklch(0.9203 0.0323 264.4);
+  --color-vtxnavy-200: oklch(0.8432 0.065 263.71);
+  --color-vtxnavy-300: oklch(0.7671 0.1006 263.44);
+  --color-vtxnavy-400: oklch(0.6931 0.1371 263.31);
+  --color-vtxnavy-500: oklch(0.621 0.1742 263.72);
+  --color-vtxnavy-600: oklch(0.5352 0.211 264.23);
+  --color-vtxnavy-700: oklch(0.4465 0.1709 263.91);
+  --color-vtxnavy-800: oklch(0.3524 0.1307 264.08);
+  --color-vtxnavy-900: oklch(0.2502 0.0858 263.72);
+  --color-vtxnavy-950: oklch(0.2007 0.058 260.54);
+  --color-vtxnavy:     var(--color-vtxnavy-800);
+
+  --color-blue-50:  oklch(0.9598 0.0161 262.75);
+  --color-blue-100: oklch(0.9203 0.0323 264.4);
+  --color-blue-200: oklch(0.8432 0.065 263.71);
+  --color-blue-300: oklch(0.7671 0.1006 263.44);
+  --color-blue-400: oklch(0.6931 0.1371 263.31);
+  --color-blue-500: oklch(0.621 0.1742 263.72);
+  --color-blue-600: oklch(0.5352 0.211 264.23);
+  --color-blue-700: oklch(0.4465 0.1709 263.91);
+  --color-blue-800: oklch(0.3524 0.1307 264.08);
+  --color-blue-900: oklch(0.2502 0.0858 263.72);
+  --color-blue-950: oklch(0.2007 0.058 260.54);
+  --color-blue:     var(--color-blue-800);
+
+  --color-vtxteal-50:  oklch(0.9836 0.0142 180.72);
+  --color-vtxteal-100: oklch(0.952 0.0507 181.07);
+  --color-vtxteal-200: oklch(0.9108 0.0962 180.11);
+  --color-vtxteal-300: oklch(0.8539 0.1375 181.57);
+  --color-vtxteal-400: oklch(0.783 0.140791 181.3751);
+  --color-vtxteal-500: oklch(0.7105 0.127578 181.6019);
+  --color-vtxteal-600: oklch(0.6049 0.107 184.17);
+  --color-vtxteal-700: oklch(0.5152 0.090469 185.7334);
+  --color-vtxteal-800: oklch(0.4376 0.0759 188.55);
+  --color-vtxteal-900: oklch(0.3871 0.0634 187.21);
+  --color-vtxteal-950: oklch(0.2766 0.046 192.53);
+  --color-vtxteal:     var(--color-vtxteal-500);
+}
