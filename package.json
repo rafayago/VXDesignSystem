@@ -12,11 +12,15 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "ui:add": "npx shadcn@latest add"
   },
   "devDependencies": {
     "shadcn": "^4.3.0",
     "turbo": "^2.5.0",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "radix-ui": "^1.4.3"
   }
 }
