@@ -1,8 +1,24 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import {
+  IconBell,
+  IconBox,
+  IconBug,
+  IconCreditCard,
+  IconHelpCircle,
+  IconLayoutDashboard,
+  IconListCheck,
+  IconLogout,
+  IconMessageCircle,
+  IconSearch,
+  IconSelector,
+  IconSettings,
+  IconSettings2,
+  IconSun,
+  IconUser,
+  IconUsers,
+  IconX
+} from "@tabler/icons-react";
 import {
   Avatar,
   AvatarFallback,
@@ -22,33 +38,9 @@ import {
   Input,
   Separator,
 } from "@vortx/ui";
-import {
-  IconBell,
-  IconBox,
-  IconBug,
-  IconBuilding,
-  IconChartBar,
-  IconChevronDown,
-  IconChevronRight,
-  IconComponents,
-  IconCreditCard,
-  IconHelpCircle,
-  IconLayoutDashboard,
-  IconListCheck,
-  IconLogout,
-  IconMessageCircle,
-  IconMoonStars,
-  IconSearch,
-  IconSelector,
-  IconSettings,
-  IconSettings2,
-  IconShieldLock,
-  IconSun,
-  IconTrendingUp,
-  IconUser,
-  IconUsers,
-  IconX,
-} from "@tabler/icons-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, type ReactNode } from "react";
 
 // ── Navigation tree ────────────────────────────────────────────────────────────
 const navGroups = [

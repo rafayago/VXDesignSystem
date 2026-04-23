@@ -1,0 +1,15 @@
+/* Vega gray palette — cool-leaning brand gray (hue ~264–278, low chroma).
+   Matches the primitive.css default scale. Import this to activate the Vega brand gray. */
+:root {
+  --gray-50:  oklch(0.97 0.0029 264.54);
+  --gray-100: oklch(0.949 0.0042 271.37);
+  --gray-200: oklch(0.891 0.0059 264.53);
+  --gray-300: oklch(0.809 0.0084 278.61);
+  --gray-400: oklch(0.726 0.0117 274.83);
+  --gray-500: oklch(0.552 0.0177 269.83);
+  --gray-600: oklch(0.445 0.0191 266.1);
+  --gray-700: oklch(0.372 0.0217 267.45);
+  --gray-800: oklch(0.276 0.0182 262.2);
+  --gray-900: oklch(0.21 0.0185 270.39);
+  --gray-950: oklch(0.136 0.0164 269.4);
+}

@@ -1,0 +1,15 @@
+/* Pure neutral gray palette — achromatic (chroma = 0), no hue tilt.
+   Import this instead of gray-vega.css when no color temperature is desired. */
+:root {
+  --gray-50:  oklch(0.97 0 0);
+  --gray-100: oklch(0.949 0 0);
+  --gray-200: oklch(0.891 0 0);
+  --gray-300: oklch(0.809 0 0);
+  --gray-400: oklch(0.726 0 0);
+  --gray-500: oklch(0.552 0 0);
+  --gray-600: oklch(0.445 0 0);
+  --gray-700: oklch(0.372 0 0);
+  --gray-800: oklch(0.276 0 0);
+  --gray-900: oklch(0.21 0 0);
+  --gray-950: oklch(0.136 0 0);
+}

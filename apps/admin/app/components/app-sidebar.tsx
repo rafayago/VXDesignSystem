@@ -168,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="overflow-hidden border-r bg-sidebar *:data-[sidebar=sidebar]:flex-row"
+      className="overflow-hidden border-r bg-sidebar *:data-[sidebar=sidebar]:flex-row pt-13"
       {...props}
     >
       <Sidebar collapsible="none" className="w-[88px] border-r">

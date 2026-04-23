@@ -1,16 +1,15 @@
 /**
- * Exports design tokens to Tokens Studio for Figma format.
+ * Exports design tokens to Figma Variables REST API format.
  *
  * Usage:  node scripts/export-tokens.mjs
- * Output: dist/tokens.figma.json  ← import this file in Tokens Studio for Figma
+ * Output: dist/tokens.figma.json
  *
- * Format: Tokens Studio (value / type — no $ prefix)
- * https://docs.tokens.studio/
+ * Import via Figma REST API:
+ *   POST https://api.figma.com/v1/files/:file_key/variables
+ *   Headers: X-Figma-Token: <your_personal_access_token>
+ *   Body: contents of dist/tokens.figma.json
  *
- * Import steps in Tokens Studio:
- *   1. Open Tokens Studio plugin in Figma
- *   2. Import → Load from file → select tokens.figma.json
- *   3. In Themes, enable "Light" or "Dark" and apply to your frames
+ * Docs: https://developers.figma.com/docs/rest-api/variables/
  */
 
 import { readFileSync, mkdirSync, writeFileSync } from "fs";
@@ -21,61 +20,85 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const SRC  = join(ROOT, "src");
 
-// oklch -> CSS color (#RRGGBB or rgba). Never 8-digit hex.
-function oklchToColor(l, c, h, alpha = 1) {
-  const hRad = (h * Math.PI) / 180;
-  const a  = c * Math.cos(hRad);
-  const b  = c * Math.sin(hRad);
-  const l_ = l + 0.3963377774 * a + 0.2158037573 * b;
-  const m_ = l - 0.1055613458 * a - 0.0638541728 * b;
-  const s_ = l - 0.0894841775 * a - 1.291485548  * b;
+// ─── Stable temporary IDs (scoped to this request) ──────────────────────────
+
+const COL_PRIMITIVE = "collection/primitives";
+const COL_SEMANTIC  = "collection/semantic";
+const MODE_DEFAULT  = "mode/default";
+const MODE_LIGHT    = "mode/light";
+const MODE_DARK     = "mode/dark";
+
+// ─── oklch → Figma RGBA { r, g, b, a }  (all values 0–1) ───────────────────
+
+function r4(n) { return Math.round(n * 10000) / 10000; }
+
+function oklchToFigmaColor(l, c, h, alpha = 1) {
+  const rad = (h * Math.PI) / 180;
+  const a_  = c * Math.cos(rad);
+  const b_  = c * Math.sin(rad);
+  const l_  = l + 0.3963377774 * a_ + 0.2158037573 * b_;
+  const m_  = l - 0.1055613458 * a_ - 0.0638541728 * b_;
+  const s_  = l - 0.0894841775 * a_ - 1.291485548  * b_;
   const lc = l_ ** 3, mc = m_ ** 3, sc = s_ ** 3;
-  const r  =  4.0767416621 * lc - 3.3077115913 * mc + 0.2309699292 * sc;
-  const g  = -1.2684380046 * lc + 2.6097574011 * mc - 0.3413193965 * sc;
-  const bv = -0.0041960863 * lc - 0.7034186147 * mc + 1.707614701  * sc;
-  const ch = (x) => { const v = Math.max(0, Math.min(1, x)); return v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055; };
-  const ri = Math.round(ch(r) * 255);
-  const gi = Math.round(ch(g) * 255);
-  const bi = Math.round(ch(bv) * 255);
-  if (alpha < 1) return `rgba(${ri}, ${gi}, ${bi}, ${parseFloat(alpha.toFixed(4))})`;
-  return "#" + [ri, gi, bi].map((v) => v.toString(16).padStart(2, "0")).join("").toUpperCase();
+  const lr =  4.0767416621 * lc - 3.3077115913 * mc + 0.2309699292 * sc;
+  const lg = -1.2684380046 * lc + 2.6097574011 * mc - 0.3413193965 * sc;
+  const lb = -0.0041960863 * lc - 0.7034186147 * mc + 1.707614701  * sc;
+  // sRGB transfer function (gamma encode)
+  const srgb = (x) => {
+    const v = Math.max(0, Math.min(1, x));
+    return v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
+  };
+  return { r: r4(srgb(lr)), g: r4(srgb(lg)), b: r4(srgb(lb)), a: r4(alpha) };
 }
 
-function toCssColor(value) {
-  const m = value.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+)(%?))?\s*\)/i);
-  if (!m) return value;
-  const alpha = m[4] !== undefined ? (m[5] === "%" ? parseFloat(m[4]) / 100 : parseFloat(m[4])) : 1;
-  return oklchToColor(parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3]), alpha);
-}
-
-const CSS_KEYWORDS = new Set(["transparent", "currentcolor", "inherit", "initial", "unset"]);
-
-function remToPxStr(value) {
-  const n = parseFloat(value);
-  if (isNaN(n)) return null;
-  if (value.endsWith("px"))  return String(Math.round(n));
-  if (value.endsWith("rem")) return String(Math.round(n * 16));
+function parseCssColorToFigma(value) {
+  // oklch(L C H) or oklch(L C H / A%)
+  const ok = value.match(
+    /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+)(%?))?\s*\)/i,
+  );
+  if (ok) {
+    const alpha = ok[4] !== undefined
+      ? (ok[5] === "%" ? parseFloat(ok[4]) / 100 : parseFloat(ok[4]))
+      : 1;
+    return oklchToFigmaColor(parseFloat(ok[1]), parseFloat(ok[2]), parseFloat(ok[3]), alpha);
+  }
+  // #RRGGBB or #RRGGBBAA
+  const hex = value.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?$/i);
+  if (hex) {
+    return {
+      r: r4(parseInt(hex[1], 16) / 255),
+      g: r4(parseInt(hex[2], 16) / 255),
+      b: r4(parseInt(hex[3], 16) / 255),
+      a: hex[4] ? r4(parseInt(hex[4], 16) / 255) : 1,
+    };
+  }
   return null;
 }
 
+// ─── CSS parser ──────────────────────────────────────────────────────────────
+// Extract all --name: value; declarations regardless of selector / at-rule context.
+// NOTE: intentionally does NOT strip @theme blocks — globals.css uses @theme.
+
 function parseCssProps(css) {
   const result = {};
-  const stripped = css.replace(/@[a-z-]+[^{]*\{(?:[^{}]|\{[^{}]*\})*\}/gs, "");
   const re = /--([a-zA-Z0-9_-]+)\s*:\s*([^;]+);/g;
   let m;
-  while ((m = re.exec(stripped)) !== null) result[m[1].trim()] = m[2].trim();
+  while ((m = re.exec(css)) !== null) result[m[1].trim()] = m[2].trim();
   return result;
 }
 
 function read(p) { return readFileSync(p, "utf8"); }
 
-// Tokens Studio format builders: { value, type }
-const mkColor   = (v)    => ({ value: v,           type: "color" });
-const mkAlias   = (path) => ({ value: `{${path}}`, type: "color" });
-const mkSpacing = (v)    => ({ value: v,            type: "spacing" });
-const mkRadius  = (v)    => ({ value: v,            type: "borderRadius" });
+function remToPx(value) {
+  const n = parseFloat(value);
+  if (isNaN(n)) return null;
+  if (value.endsWith("px"))  return n;
+  if (value.endsWith("rem")) return r4(n * 16);
+  return null;
+}
 
-// load source
+// ─── Load CSS sources ────────────────────────────────────────────────────────
+
 const primitiveProps = parseCssProps(read(join(SRC, "tokens/primitive.css")));
 const spacingProps   = parseCssProps(read(join(SRC, "tokens/spacing.css")));
 const radiusProps    = parseCssProps(read(join(SRC, "tokens/radius.css")));
@@ -83,139 +106,152 @@ const globalsProps   = parseCssProps(read(join(SRC, "themes/globals.css")));
 const lightProps     = parseCssProps(read(join(SRC, "themes/light.css")));
 const darkProps      = parseCssProps(read(join(SRC, "themes/dark.css")));
 
-// PASS 1 — primitives + reverse map
-const cssVarToPath = {};
+const CSS_SKIP = new Set(["transparent", "currentcolor", "inherit", "initial", "unset"]);
 
-function buildColorScale(props) {
-  const out = {};
-  for (const [k, v] of Object.entries(props)) {
-    if (v.startsWith("var(") || CSS_KEYWORDS.has(v.toLowerCase())) continue;
-    const parts = k.split("-");
-    cssVarToPath[k] = `primitive.color.${parts.join(".")}`;
-    let node = out;
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!node[parts[i]]) node[parts[i]] = {};
-      node = node[parts[i]];
-    }
-    node[parts.at(-1)] = mkColor(toCssColor(v));
-  }
-  return out;
+// ─── Variable registry ───────────────────────────────────────────────────────
+
+// Maps CSS var name (without --) → Figma variable id, for alias resolution
+const cssVarToFigmaId = {};
+const variables = [];
+
+function addVariable(cssVarName, figmaName, collectionId, resolvedType, valuesByMode) {
+  const id = `var/${figmaName}`;
+  if (cssVarName) cssVarToFigmaId[cssVarName] = id;
+  variables.push({
+    action: "CREATE",
+    id,
+    name: figmaName,
+    variableCollectionId: collectionId,
+    resolvedType,
+    valuesByMode,
+  });
+  return id;
 }
 
-const globalColors = {};
+// ─── Primitives: raw color scale ─────────────────────────────────────────────
+// Source: tokens/primitive.css  (gray, status, chart, white, black)
+
+for (const [k, v] of Object.entries(primitiveProps)) {
+  if (CSS_SKIP.has(v.toLowerCase()) || v.startsWith("var(")) continue;
+  const color = parseCssColorToFigma(v);
+  if (!color) continue;
+  // gray-50 → color/gray/50,  white → color/white,  chart-orange → color/chart/orange
+  addVariable(k, `color/${k.replace(/-/g, "/")}`, COL_PRIMITIVE, "COLOR", {
+    [MODE_DEFAULT]: color,
+  });
+}
+
+// ─── Primitives: brand palette ───────────────────────────────────────────────
+// Source: themes/globals.css  (color-vtxnavy-*, color-blue-*, color-vtxteal-*)
+// Only raw oklch values — skip var() references (those are Tailwind utility aliases).
+
 for (const [k, v] of Object.entries(globalsProps)) {
-  if (k.startsWith("color-") && !v.startsWith("var(") && !CSS_KEYWORDS.has(v.toLowerCase())) {
-    globalColors[k.replace(/^color-/, "")] = v;
-  }
+  if (!k.startsWith("color-")) continue;
+  if (CSS_SKIP.has(v.toLowerCase()) || v.startsWith("var(")) continue;
+  const color = parseCssColorToFigma(v);
+  if (!color) continue;
+  // color-vtxnavy-50 → color/vtxnavy/50  (strip "color-" prefix)
+  const figmaName = `color/${k.replace(/^color-/, "").replace(/-/g, "/")}`;
+  addVariable(k, figmaName, COL_PRIMITIVE, "COLOR", { [MODE_DEFAULT]: color });
 }
 
-const primitiveColor = { ...buildColorScale(primitiveProps), ...buildColorScale(globalColors) };
+// ─── Primitives: spacing ─────────────────────────────────────────────────────
 
-const primitiveSpacing = {};
 for (const [k, v] of Object.entries(spacingProps)) {
-  const key = k.replace(/^space-/, "");
-  const px  = remToPxStr(v);
-  if (px !== null) {
-    cssVarToPath[k] = `primitive.spacing.${key}`;
-    primitiveSpacing[key] = mkSpacing(px);
-  }
+  const px = remToPx(v);
+  if (px === null) continue;
+  addVariable(k, `spacing/${k.replace(/^space-/, "")}`, COL_PRIMITIVE, "FLOAT", {
+    [MODE_DEFAULT]: px,
+  });
 }
 
-const primitiveRadius = {};
+// ─── Primitives: radius ───────────────────────────────────────────────────────
+
 for (const [k, v] of Object.entries(radiusProps)) {
-  const key = k.replace(/^radius-/, "");
-  const px  = remToPxStr(v);
-  if (px !== null) {
-    cssVarToPath[k] = `primitive.radius.${key}`;
-    primitiveRadius[key] = mkRadius(px);
-  }
+  const px = remToPx(v);
+  if (px === null) continue;
+  addVariable(k, `radius/${k.replace(/^radius-/, "")}`, COL_PRIMITIVE, "FLOAT", {
+    [MODE_DEFAULT]: px,
+  });
 }
 
-// PASS 2 — semantic tokens
+// ─── Semantic layer (Light + Dark modes) ─────────────────────────────────────
+// Semantic tokens reference primitives via var(). Resolved as VARIABLE_ALIAS.
+// --radius is a computed sizing helper used by Tailwind @theme, not a semantic color.
+
+const SKIP_SEMANTIC = new Set(["radius"]);
+
 function resolveSemanticValue(cssVarName, rawValue) {
-  const varMatch = rawValue.match(/^var\(--([a-zA-Z0-9_-]+)\)$/);
-  if (varMatch) {
-    const jsonPath = cssVarToPath[varMatch[1]];
-    if (jsonPath) return mkAlias(jsonPath);
-    console.warn(`  warning: unresolved var(--${varMatch[1]}) in --${cssVarName}`);
+  if (!rawValue) return null;
+  const ref = rawValue.match(/^var\(--([a-zA-Z0-9_-]+)\)$/);
+  if (ref) {
+    const primitiveId = cssVarToFigmaId[ref[1]];
+    if (primitiveId) return { type: "VARIABLE_ALIAS", id: primitiveId };
+    console.warn(`  ⚠  unresolved var(--${ref[1]}) in --${cssVarName}`);
     return null;
   }
-  if (rawValue.startsWith("oklch(") || rawValue.startsWith("#") || rawValue.startsWith("rgb")) {
-    return mkColor(toCssColor(rawValue));
-  }
-  return null;
+  return parseCssColorToFigma(rawValue);
 }
 
-function buildSemantic(props) {
-  const out = {};
-  for (const [k, v] of Object.entries(props)) {
-    if (k === "radius") continue;
-    const tok = resolveSemanticValue(k, v);
-    if (!tok) continue;
-    const parts     = k.split("-");
-    const parentKey = parts.slice(0, -1).join("-");
-    const parentIsToken = parts.length > 1 && props[parentKey] !== undefined;
-    if (parts.length > 1 && !parentIsToken) {
-      let node = out;
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!node[parts[i]]) node[parts[i]] = {};
-        node = node[parts[i]];
-      }
-      node[parts.at(-1)] = tok;
-    } else {
-      out[k] = tok;
-    }
-  }
-  return out;
+const allSemanticKeys = new Set([...Object.keys(lightProps), ...Object.keys(darkProps)]);
+
+for (const k of allSemanticKeys) {
+  if (SKIP_SEMANTIC.has(k)) continue;
+
+  const lightResolved = resolveSemanticValue(k, lightProps[k]);
+  // Fall back to light value when dark doesn't define the token
+  const darkResolved  = resolveSemanticValue(k, darkProps[k] ?? lightProps[k]);
+  if (!lightResolved) continue;
+
+  const valuesByMode = { [MODE_LIGHT]: lightResolved };
+  if (darkResolved) valuesByMode[MODE_DARK] = darkResolved;
+
+  // card-foreground → card/foreground
+  addVariable(null, k.replace(/-/g, "/"), COL_SEMANTIC, "COLOR", valuesByMode);
 }
 
-// assemble
-const primitive     = { color: primitiveColor, spacing: primitiveSpacing, radius: primitiveRadius };
-const semanticLight = buildSemantic(lightProps);
-const semanticDark  = buildSemantic(darkProps);
+// ─── Assemble output ──────────────────────────────────────────────────────────
 
 const output = {
-  $metadata: {
-    tokenSetOrder: ["primitive", "semantic/light", "semantic/dark"],
-  },
-  $themes: [
+  variableCollections: [
     {
-      id:   "light",
-      name: "Light",
-      selectedTokenSets: { primitive: "enabled", "semantic/light": "enabled", "semantic/dark": "disabled" },
+      action: "CREATE",
+      id: COL_PRIMITIVE,
+      name: "Primitives",
+      defaultModeId: MODE_DEFAULT,
+      modes: [{ id: MODE_DEFAULT, name: "Default" }],
     },
     {
-      id:   "dark",
-      name: "Dark",
-      selectedTokenSets: { primitive: "enabled", "semantic/light": "disabled", "semantic/dark": "enabled" },
+      action: "CREATE",
+      id: COL_SEMANTIC,
+      name: "Semantic",
+      defaultModeId: MODE_LIGHT,
+      modes: [
+        { id: MODE_LIGHT, name: "Light" },
+        { id: MODE_DARK,  name: "Dark" },
+      ],
     },
   ],
-  primitive,
-  "semantic/light": semanticLight,
-  "semantic/dark":  semanticDark,
+  variables,
+  variableModeValues: [],
 };
 
 const distDir = join(ROOT, "dist");
 mkdirSync(distDir, { recursive: true });
 writeFileSync(join(distDir, "tokens.figma.json"), JSON.stringify(output, null, 2), "utf8");
-writeFileSync(join(distDir, "tokens.primitives.json"),     JSON.stringify(primitive,     null, 2), "utf8");
-writeFileSync(join(distDir, "tokens.semantic-light.json"), JSON.stringify(semanticLight, null, 2), "utf8");
-writeFileSync(join(distDir, "tokens.semantic-dark.json"),  JSON.stringify(semanticDark,  null, 2), "utf8");
 
-// stats
-let colors = 0, aliases = 0, dims = 0;
-function count(o) {
-  for (const v of Object.values(o)) {
-    if (!v || typeof v !== "object") continue;
-    if ("type" in v && "value" in v) {
-      if (v.type === "color") { colors++; if (String(v.value).startsWith("{")) aliases++; }
-      if (v.type === "spacing" || v.type === "borderRadius") dims++;
-    } else count(v);
-  }
+// ─── Stats ───────────────────────────────────────────────────────────────────
+
+const byCol = {};
+let aliasCount = 0;
+for (const v of variables) {
+  byCol[v.variableCollectionId] = (byCol[v.variableCollectionId] ?? 0) + 1;
+  if (Object.values(v.valuesByMode).some((val) => val?.type === "VARIABLE_ALIAS")) aliasCount++;
 }
-count(output);
-console.log(`\u2713 tokens exported \u2192 dist/tokens.figma.json`);
-console.log(`  Format: Tokens Studio (value/type)`);
-console.log(`  ${colors} color tokens (${aliases} aliases, ${colors - aliases} hex/rgba)`);
-console.log(`  ${dims} dimension tokens (spacing + borderRadius)`);
-console.log(`  ${Object.keys(cssVarToPath).length} primitive var mappings`);
+
+console.log("✓ tokens exported → dist/tokens.figma.json");
+console.log("  Format : Figma Variables REST API");
+console.log(`  POST   : https://api.figma.com/v1/files/<file_key>/variables`);
+console.log(`  Total  : ${variables.length} variables`);
+console.log(`  Primitives : ${byCol[COL_PRIMITIVE] ?? 0} (${Object.keys(cssVarToFigmaId).length} CSS var mappings)`);
+console.log(`  Semantic   : ${byCol[COL_SEMANTIC] ?? 0} (${aliasCount} aliases, rest are raw colors)`);
